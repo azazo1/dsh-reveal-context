@@ -1,0 +1,4 @@
+# DSH prerelease packages publish in lockstep; the release-age window would
+# otherwise refuse a frozen-lockfile install.
+minimumReleaseAgeExclude:
+  - '@deepseek-ai/*'

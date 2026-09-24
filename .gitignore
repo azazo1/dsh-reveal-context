@@ -1,0 +1,29 @@
+# 依赖目录
+node_modules/
+.pnpm-store/
+
+# 临时目录
+.tmp/
+
+# 构建产物: dist 是打包输出; lib/ 是随包发布的产物, 故意提交
+dist/
+*.tgz
+
+# 编辑器与系统文件
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# 本地配置与凭据
+.env
+.env.*
+
+# 日志与覆盖率
+*.log
+pnpm-debug.log*
+coverage/
+
+# 仅本机参考, 不随版本发布
+.references/
