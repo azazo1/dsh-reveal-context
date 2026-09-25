@@ -161,6 +161,26 @@ check(
   definition.match({ type: 'assistant/message', seq: 8, time: 0, data: {} }) === null,
   'the definition matches an assistant message',
 )
+// 0.1.7-rc.2 起 agent loop 会追加 developer/message 记录工具增删, 而 isVisibleChatNode
+// 已经让这类 context 行自己显示; 本插件再匹配一次就是重复行.
+check(
+  definition.match({
+    type: 'developer/message',
+    seq: 9,
+    time: 0,
+    data: {
+      turn: 1,
+      step: 1,
+      message: {
+        id: 'developer-1',
+        role: 'developer',
+        source: { kind: 'tool-registry' },
+        content: [{ type: 'tool-addition', toolName: 'search' }],
+      },
+    },
+  }) === null,
+  'the definition matches a developer/message tool-registry row and would duplicate it',
+)
 
 const node = definition.buildViewNode({
   key: 'reveal-context\u0000m-1',

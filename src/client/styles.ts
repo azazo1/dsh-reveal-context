@@ -6,7 +6,8 @@
  * 141px 限高、内滚动、带 code-block 背景的正文面板. 这样本插件补回来的行和 DSH 其他
  * 流程行保持同一节奏, 也不会因为正文长就把整轮撑开.
  *
- * 颜色只用 `--dsw-alias-*` 语义 token, 注入方式沿用客户端构建预设认可的 `data-plugin-css` 标记.
+ * 颜色与圆角只用 `--dsw-*` 语义 token, 注入方式沿用客户端构建预设认可的 `data-plugin-css` 标记.
+ * 0.1.7-rc.2 起官方正文面板的圆角改走 `--dsw-radius-md`, 这里跟着走 token.
  */
 
 import { PLUGIN_ID } from '../settings.ts'
@@ -51,7 +52,7 @@ const css = `
   overflow: auto;
   padding: 10px 16px 12px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-markdown-code-block);
   color: var(--dsw-alias-label-tertiary);
   font: 400 11px/16px var(--ds-font-family-code);

@@ -1,8 +1,8 @@
 /**
  * 让被隐藏的注入行重新长成一种自己的 Chat 节点.
  *
- * 背景: 对话视图的可见性判定 (`isVisibleChatNode`) 会整体排除 `kind === 'context'`
- * 的节点, 所以 DSH 注入的上下文一律不在对话里显示. 那个判定只看节点的 kind,
+ * 背景: 对话视图的可见性判定 (`isVisibleChatNode`) 会排除 `kind === 'context'`
+ * 的节点, 所以 DSH 注入的上下文基本不在对话里显示. 那个判定只看节点的 kind,
  * 因此这里注册**另一个** conversation 定义: 它匹配同一批 `user/message` 事件,
  * 但产出的节点 kind 是自己的 `reveal-context`, 于是能通过判定, 再由本插件的
  * 渲染器画成一行.
@@ -12,6 +12,12 @@
  *
  * `ChatNodeDataMap` 是 DSH 公开的 merge-extensible 载荷注册表, 新增一种 kind 是
  * 它设计内的用法; `ChatNodeKind` 随之带上本插件的 kind.
+ *
+ * 边界 (`0.1.7-rc.2`): 只匹配 `user/message`. 从 0.1.7-rc.2 起 agent loop 会自己
+ * 追加 `developer/message` (`source.kind` 为 `tool-registry`, 内容是 `tool-addition`
+ * / `tool-removal`), 同时 `isVisibleChatNode` 放宽成"含工具增删块的 context 节点
+ * 照旧显示". 这类行已经由 DSH 自己画出来, 本插件再匹配一次只会重复一行, 所以
+ * `match` 只认 `user/message`.
  */
 
 import type { ChatNode } from '@deepseek-ai/dsh-client-ui-chat/client'
@@ -116,6 +122,8 @@ export function createRevealContextDefinition(
     target: 'chat',
 
     match(event) {
+      // 只认 user/message. `developer/message` 的工具增删行从 0.1.7-rc.2 起由 DSH
+      // 自己显示, 这里再匹配一次就是重复行.
       if (event.type !== 'user/message') return null
       const message = event.data as InjectionMessage
       if (!shouldReveal(message.source?.kind, readSettings())) return null
