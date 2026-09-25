@@ -181,6 +181,22 @@ check(
   }) === null,
   'the definition matches a developer/message tool-registry row and would duplicate it',
 )
+// 压缩标记 (compact-checkpoint) 是 surfaceOp: 'replace' 的 user/message, 官方已经
+// 自己画了压缩行; 本插件只认追加进历史的行, 否则会重复. append 表面的消息不受影响.
+check(
+  definition.match({
+    ...eventOf({ kind: 'compact-checkpoint' }),
+    surfaceOp: 'replace',
+  }) === null,
+  'the definition matches a replace-surface compaction row and would duplicate it',
+)
+check(
+  definition.match({
+    ...eventOf({ kind: 'compact-checkpoint' }),
+    surfaceOp: 'append',
+  })?.role === 'start',
+  'the definition dropped an append-surface injected message',
+)
 
 const node = definition.buildViewNode({
   key: 'reveal-context\u0000m-1',

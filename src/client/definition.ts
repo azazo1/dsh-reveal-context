@@ -125,6 +125,9 @@ export function createRevealContextDefinition(
       // 只认 user/message. `developer/message` 的工具增删行从 0.1.7-rc.2 起由 DSH
       // 自己显示, 这里再匹配一次就是重复行.
       if (event.type !== 'user/message') return null
+      // 只显示追加进历史的行: 压缩标记这类 `surfaceOp: 'replace'` 的事件已经由
+      // 官方自己呈现, 再匹配一次同样是重复行. 没有 surfaceOp 的旧日志按追加处理.
+      if ('surfaceOp' in event && event.surfaceOp !== 'append') return null
       const message = event.data as InjectionMessage
       if (!shouldReveal(message.source?.kind, readSettings())) return null
       return { id: String(event.data.id), role: 'start' }
